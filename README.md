@@ -1,46 +1,62 @@
 # WaybackServices
 
-`waybackservices` is a Go tool to hunt for exposed information about a target domain using the **Wayback Machine**, focusing on major online services (Google, Microsoft, GitHub, Slack, etc.).
+`waybackservices` is a Go tool to hunt for exposed information about a target domain via the **Wayback Machine**, focusing on major online services (Google, Microsoft, GitHub, Slack, etc.).
 
 ---
 
 ## Build
 
-go build -o waybackservices waybackservices.go---
+```sh
+go build -o waybackservices waybackservices.go
+```
 
-## Basic usage
+---
 
-- **Single domain**:
+## Usage
 
-./waybackservices -d example.com- **List of domains** (one per line in `list.txt`):
+- **Single domain:**
 
-./waybackservices -l list.txtIf you don’t specify `-provider`, all known providers are used.
+```sh
+./waybackservices -d example.com
+```
+
+- **List of domains** (one domain per line in `list.txt`):
+
+```sh
+./waybackservices -l list.txt
+```
+
+If you do not specify the `-provider` option, all supported providers will be scanned.
 
 ---
 
 ## Providers
 
-You can restrict the scan to one or more providers (comma‑separated):
+You can restrict the scan to one or more providers (comma-separated):
 
-./waybackservices -d example.com -provider google,github,sharepointSupported providers (main ones):
+```sh
+./waybackservices -d example.com -provider google,github,sharepoint
+```
 
-- `google`      – Sites / Docs / Groups / Drive / Mail / Sheets / spreadsheets0–8
+**Main supported providers:**
+
+- `google`      – Sites, Docs, Groups, Drive, Mail, Sheets, spreadsheets0–8
 - `sharepoint`  – SharePoint Online + personal OneDrive
 - `onedrive`    – short links on `1drv.ms`
-- `dropbox`     – shared links / folders
-- `box`         – Box shared links / folders
-- `github`      – repos + `raw.githubusercontent.com`
-- `gitlab`      – GitLab repos
-- `bitbucket`   – Bitbucket repos
+- `dropbox`     – shared Dropbox links and folders
+- `box`         – Box shared links and folders
+- `github`      – repositories + `raw.githubusercontent.com`
+- `gitlab`      – GitLab repositories
+- `bitbucket`   – Bitbucket repositories
 - `atlassian`   – Confluence + Jira (`*.atlassian.net`)
-- `notion`      – Notion pages
+- `notion`      – Notion public pages
 - `slack`       – `files.slack.com` + `<domain>.slack.com`
 - `trello`      – Trello boards
 - `azure`       – `*.blob.core.windows.net` + `*.azurewebsites.net`
 - `s3`          – S3 buckets / website endpoints
 - `gcs`         – Google Cloud Storage buckets
-- `firebase`    – `*.firebaseio.com` + Firebase Storage
-- `paste`       – Pastebin + Hastebin
+- `firebase`    – `*.firebaseio.com` + Firebase Storage files
+- `paste`       – Pastebin and Hastebin
 - `calendar`    – public Google Calendars
 - `zoom`        – `<domain>.zoom.us`
 - `figma`       – Figma files
@@ -51,36 +67,55 @@ You can restrict the scan to one or more providers (comma‑separated):
 
 Enable automatic HTML report generation per domain:
 
-- **Single domain**:
+- **Single domain:**
 
-./waybackservices -d example.com -provider google,github -report- **List of domains**:
+```sh
+./waybackservices -d example.com -provider google,github -report
+```
 
-./waybackservices -l list.txt -provider google,github -reportFor each domain, an HTML file is created in the current directory:
+- **List of domains:**
 
-wayback-<domain>-<timestamp>.htmlEach report includes:
+```sh
+./waybackservices -l list.txt -provider google,github -report
+```
+
+For each domain, a HTML file will be created in the current directory:
+
+```
+wayback-<domain>-<timestamp>.html
+```
+
+Each report includes:
 
 - A header with the domain and generation date.
-- One table per service (e.g. `google_docs`, `github_repos`) listing:
+- One table per service (e.g., `google_docs`, `github_repos`) listing:
   - the Wayback capture date,
   - the archived URL (clickable).
 
 ---
 
-## Debug & rate limiting
+## Debug & Rate Limiting
 
-- **Debug mode**:
+- **Debug mode:**
 
-./waybackservices -d example.com -provider google -debugThis prints:
+```sh
+./waybackservices -d example.com -provider google -debug
+```
 
-- The Wayback API URLs being requested.
+This will print:
+
+- The queried Wayback API URLs.
 - HTTP / read / JSON errors (with `[WARN]` messages).
 
-- To be nicer to Wayback and reduce rate limiting:
+- To be polite to Wayback and reduce rate limiting:
   - Requests are sent **sequentially**, not in parallel.
   - A small delay is added between each pattern query.
 
 During a run, a simple progress indicator is printed to `stderr`, for example:
 
+```
 [1/15] google_sites
 [2/15] google_docs
 ...
+```
+
